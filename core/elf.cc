@@ -32,6 +32,7 @@ TRACEPOINT(trace_elf_load, "%s", const char *);
 TRACEPOINT(trace_elf_unload, "%s", const char *);
 TRACEPOINT(trace_elf_lookup, "%s", const char *);
 TRACEPOINT(trace_elf_lookup_addr, "%p", const void *);
+TRACEPOINT(trace_elf_test, "%s", const char*);
 
 using namespace std;
 using namespace boost::range;
@@ -523,8 +524,9 @@ symbol_module object::symbol(unsigned idx)
     if (!ret.symbol && binding == STB_WEAK) {
         return symbol_module(sym, this);
     }
+    
     if (!ret.symbol) {
-        abort("Failed looking up symbol %s\n", demangle(name).c_str());
+        abort("Failed looking up symbol %s (%s) id=%d\n", demangle(name).c_str(), name, idx);
     }
     return ret;
 }
@@ -1121,6 +1123,7 @@ symbol_module program::lookup(const char* name)
     with_modules([&](const elf::program::modules_list &ml)
     {
         for (auto module : ml.objects) {
+            trace_elf_test(module->pathname().c_str());
             if (auto sym = module->lookup_symbol(name)) {
                 ret = symbol_module(sym, module);
                 return;

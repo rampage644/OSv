@@ -135,7 +135,7 @@ def start_osv_qemu(options):
         if (options.vhost):
             args += ["-netdev", "tap,id=hn0,script=scripts/qemu-ifup.sh,vhost=on"]
         else:
-            args += ["-netdev", "bridge,id=hn0,br=%s,helper=/usr/libexec/qemu-bridge-helper" % (options.bridge)]
+            args += ["-netdev", "bridge,id=hn0,br=%s,helper=/usr/lib/qemu/qemu-bridge-helper" % (options.bridge)]
         net_device_options.extend(['netdev=hn0', 'id=nic1'])
     else:
         args += ["-netdev", "user,id=un0,net=192.168.122.0/24,host=192.168.122.1"]
